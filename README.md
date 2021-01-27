@@ -1,5 +1,7 @@
 # CraftML
 
+![](https://github.com/vuvko/CraftML/blob/main/CraftML-logo.png)
+
 CraftML is an automated model building tool that allows you to solve machine learning problems without programming, using a graphical interface. Various autoML frameworks are used to build models.
 
 Most users will prefer using CraftML without modification. Advanced users will be able to use the solution in their tasks through the API. The source code is provided so that enthusiastic developers can add new pipeline elements and improve this solution. 
