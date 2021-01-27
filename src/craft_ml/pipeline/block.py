@@ -4,10 +4,8 @@ from ..mltypes import KwArgs
 
 
 class BlockParams(dataclass):
-    block_id: int
     name: str
     inputs: t.Sequence[int]
-    outputs: t.Sequence[int]
     realization_class: str
     realization_params: KwArgs
 
