@@ -1,3 +1,4 @@
+import importlib
 import typing as t
 from ..block import Block
 from ...mltypes import KwArgs
@@ -6,6 +7,14 @@ from ...mltypes import KwArgs
 class IdentityBlock(Block):
     def run(self, inputs: t.Any) -> t.Any:
         return inputs
+
+
+class Constant(Block):
+    def __init__(self, value: t.Any):
+        self.value = value
+
+    def run(self, inputs: None = None) -> t.Any:
+        return self.value
 
 
 class GetIdx(Block):
