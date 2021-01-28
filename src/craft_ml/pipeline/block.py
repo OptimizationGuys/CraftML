@@ -5,7 +5,7 @@ from ..mltypes import KwArgs
 
 class BlockParams(dataclass):
     name: str
-    inputs: t.Sequence[int]
+    inputs: t.Sequence[str]
     realization_class: str
     realization_params: KwArgs
 
