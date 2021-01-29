@@ -1,4 +1,3 @@
-from pathlib import Path
 import numpy as np
 import pandas as pd
 import typing as t
@@ -8,7 +7,7 @@ from ..block import Block
 
 class PandasLoader(Block):
 
-    def run(self, inputs: t.Tuple[Path, Path]) -> t.Tuple[TableDataset, TableDataset]:
+    def run(self, inputs: t.Tuple[str, str]) -> t.Tuple[TableDataset, TableDataset]:
         train_path, test_path = inputs
         train_data = pd.read_csv(train_path)
         test_data = pd.read_csv(test_path)

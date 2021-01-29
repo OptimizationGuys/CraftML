@@ -22,8 +22,15 @@ class Pipeline:
             self.cached_outputs[cur_object.name] = None
 
     def serialize(self) -> str:
-        # TODO: add serialization
-        pass
+        serializable_params = []
+        for cur_params in self.block_params:
+            serializable_params.append(
+                dict(name=cur_params.name,
+                     inputs=cur_params.inputs,
+                     realization_class=cur_params.realization_class,
+                     realization_params=cur_params.realization_params)
+            )
+        return json.dumps(serializable_params)
 
     def run_pipeline(self) -> t.Any:
         for block_idx, (cur_block, cur_params) in enumerate(zip(self.blocks, self.block_params)):
@@ -31,5 +38,11 @@ class Pipeline:
             if None in needed_inputs:
                 raise RuntimeError(f'Some inputs for block {cur_params.name} on index {block_idx} '
                                    f'are calculated in the future')
+            if len(needed_inputs) == 0:
+                needed_inputs = None
+            elif len(needed_inputs) == 1:
+                needed_inputs = needed_inputs[0]
+            else:
+                needed_inputs = tuple(needed_inputs)
             self.cached_outputs[cur_params.name] = cur_block.run(needed_inputs)
         return self.cached_outputs[self.block_params[-1].name]
