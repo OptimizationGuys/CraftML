@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 import typing as t
-from ..mltypes import KwArgs
+from ..mltypes import SerializableKwArgs
 
 
-class BlockParams(dataclass):
+@dataclass
+class BlockParams:
     name: str
     inputs: t.Sequence[str]
     realization_class: str
-    realization_params: KwArgs
+    realization_params: SerializableKwArgs
 
 
 class Block:

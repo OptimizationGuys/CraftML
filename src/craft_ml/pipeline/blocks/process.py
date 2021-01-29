@@ -1,6 +1,5 @@
 import numpy as np
 from ..block import Block
-from .common import Wrapper
 from ...data.dataset import Dataset
 from ...processing.model import TrainableModel
 from ...utils.common import initialize_class
@@ -9,11 +8,17 @@ import typing as t
 
 
 class TrainModel(Block):
-    def __init__(self, class_name: str, arguments: KwArgs):
-        self.model: TrainableModel = initialize_class(class_name, arguments)
+    def __init__(self, use_wrapper: t.Optional[str] = None):
+        self.wrapper = lambda x: x
+        if use_wrapper:
+            # TODO: add import
+            self.wrapper = None
+        self.model = None
 
-    def run(self, inputs: t.Any) -> TrainableModel:
-        self.model.fit(inputs)
+    def run(self, inputs: t.Tuple[t.Any, Dataset]) -> TrainableModel:
+        if self.model is None:
+            self.model = self.wrapper(inputs[0])
+        self.model.fit(inputs[1])
         return self.model
 
 

@@ -46,7 +46,10 @@ class Wrapper(Block):
         self.object = initialize_class(class_name, arguments)
         if method_to_run is None:
             method_to_run = '__call__'
-        self.runnable = getattr(self.object, method_to_run)
+        if method_to_run == 'id':
+            self.runnable = lambda _: self.object
+        else:
+            self.runnable = getattr(self.object, method_to_run)
 
     def run(self, inputs: t.Any) -> t.Any:
         return self.runnable(inputs)
