@@ -39,12 +39,9 @@ class TableDataset(Dataset):
         super().__init__(list(range(len(table_data))), dataset_name)
         self.table_data = table_data
         self.target_columns = target_columns
-        # self.train_columns = self.columns
-        # if self.target_columns is not None:
-        #     self.train_columns = np.setdiff1d(self.columns, self.target_columns)
 
     @staticmethod
-    # @cache
+    # TODO: fix caching
     def get_columns(table_data: TableData) -> t.Sequence[Identifier]:
         if isinstance(table_data, np.ndarray):
             return np.array(range(table_data.shape[1]))
@@ -58,7 +55,7 @@ class TableDataset(Dataset):
         return self.get_columns(self.table_data)
 
     @staticmethod
-    # @cache
+    # TODO: fix caching
     def get_train_columns(all_columns: t.Sequence[Identifier],
                           target_columns: t.Sequence[Identifier]
                           ) -> t.Sequence[Identifier]:
@@ -71,7 +68,7 @@ class TableDataset(Dataset):
         return self.get_train_columns(self.columns, self.target_columns)
 
     @staticmethod
-    # @cache
+    # TODO: fix caching
     def _get_column_data(table: TableData, columns: t.Sequence[Identifier]) -> TableData:
         if isinstance(table, np.ndarray):
             return table[:, columns]
@@ -81,7 +78,7 @@ class TableDataset(Dataset):
             raise TypeError("")  # TODO: Add an error message
 
     @staticmethod
-    # @cache
+    # TODO: fix caching
     def _get_row_data(table: TableData, rows: t.Sequence[Identifier]) -> TableData:
         if isinstance(table, np.ndarray):
             return table[rows]
