@@ -24,7 +24,7 @@ class GetIdx(Block):
         self.index = index
 
     def run(self, inputs: t.Sequence[t.Any]) -> t.Any:
-        if len(inputs) >= self.index:
+        if len(inputs) <= self.index:
             raise IndexError(f'index {self.index} out of range input length of {len(inputs)}')
         return inputs[self.index]
 

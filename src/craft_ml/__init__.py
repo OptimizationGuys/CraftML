@@ -5,9 +5,9 @@ from .pipeline.builder import Pipeline
 import typing as t
 
 
-def default_pipeline() -> t.List[BlockParams]:
-    train_csv = 'train_csv'
-    test_csv = 'test.csv'
+def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
+    train_csv = '/home/andrey/tmp/train.csv'
+    test_csv = '/home/andrey/tmp/test.csv'
     train_path_block = BlockParams(name='train_path',
                                    inputs=[],
                                    realization_class='Constant',
@@ -17,17 +17,28 @@ def default_pipeline() -> t.List[BlockParams]:
                                   realization_class='Constant',
                                   realization_params={'value': test_csv})
     dataset_block = BlockParams(name='pandas_data',
-                                inputs=[],
+                                inputs=['train_path', 'test_path'],
                                 realization_class='PandasLoader',
                                 realization_params={})
+    training_data_raw = BlockParams(name='training_data_raw',
+                                    inputs=['pandas_data'],
+                                    realization_class='GetIdx',
+                                    realization_params={'index': 0})
+    testing_data_raw = BlockParams(name='testing_data_raw',
+                                   inputs=['pandas_data'],
+                                   realization_class='GetIdx',
+                                   realization_params={'index': 1})
     training_data = BlockParams(name='training_data',
-                                inputs=['pandas_data'],
-                                realization_class='GetIdx',
-                                realization_params={'index': 0})
+                                inputs=['training_data_raw'],
+                                realization_class='TablePreprocess',
+                                realization_params={'fn_name': 'craft_ml.processing.preprocess.fillna'})
     testing_data = BlockParams(name='testing_data',
-                               inputs=['pandas_data'],
-                               realization_class='GetIdx',
-                               realization_params={'index': 1})
+                               inputs=['testing_data_raw'],
+                               realization_class='TablePreprocess',
+                               realization_params={'fn_names': [
+                                   'craft_ml.processing.preprocess.findna',
+                                   'craft_ml.processing.preprocess.fillna'
+                               ]})
     classifier_model = BlockParams(name='classifier',
                                    inputs=[],
                                    realization_class='Wrapper',
@@ -50,13 +61,19 @@ def default_pipeline() -> t.List[BlockParams]:
                                    realization_class='InferenceModel',
                                    realization_params={}
                                    )
-    return [
+    return list(map(BlockParams.to_dict, [
         train_path_block, test_path_block,
-        dataset_block, training_data,
+        dataset_block, training_data_raw,
+        testing_data_raw, training_data,
         testing_data, classifier_model,
         training_block, prediction_block
-    ]
+    ]))
 
 
 def run_app():
-    pass
+    blocks = default_pipeline()
+    blocks_str = json.dumps(blocks)
+    print(blocks_str)
+    pipeline = Pipeline(blocks_str)
+    print('Loading OK')
+    print(pipeline.run_pipeline())

@@ -10,6 +10,13 @@ class BlockParams:
     realization_class: str
     realization_params: SerializableKwArgs
 
+    @staticmethod
+    def to_dict(params) -> t.Dict[str, t.Any]:
+        return dict(name=params.name,
+                    inputs=params.inputs,
+                    realization_class=params.realization_class,
+                    realization_params=params.realization_params)
+
 
 class Block:
     """
