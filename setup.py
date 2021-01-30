@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name="craft_ml",
     description="",
-    version="0.2",
+    version="0.2.1",
     package_dir={"": "src"},
     zip_safe=True,
     packages=["craft_ml"],
