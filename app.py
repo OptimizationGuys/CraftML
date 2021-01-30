@@ -1,5 +1,5 @@
 import base64
-from typing import List
+from typing import List, Optional
 
 import craft_ml as cml
 
@@ -19,11 +19,15 @@ def read_csv(uploaded_file) -> pd.DataFrame:
 
 
 # @st.cache
-def guess_target_name(train_df: pd.DataFrame, test_df: pd.DataFrame) -> str:
+def guess_target_name(train_df: pd.DataFrame, test_df: pd.DataFrame) -> Optional[str]:
     train_columns = train_df.columns.to_numpy()
     test_columns = test_df.columns.to_numpy()
     target_columns = np.setdiff1d(train_columns, test_columns)
-    return target_columns[0]
+    if len(target_columns) < 1:
+        guessed = None
+    else:
+        guessed = target_columns[0]
+    return guessed
 
 
 def find_categorical_features(X: pd.DataFrame) -> List[str]:
@@ -104,10 +108,12 @@ try:
             st.write(train.head())
 
         st.sidebar.title('Целевая переменная')
+        guessed_name = guess_target_name(train, test)
+        guessed_index = list(train.columns).index(guessed_name) if guessed_name is not None else 0
         target_name = st.sidebar.selectbox(
             'Выбрать столбец с целевой переменной',
             train.columns,
-            index=list(train.columns).index(guess_target_name(train, test))
+            index=guessed_index
         )
         target, train = train[target_name], train.drop(target_name, axis=1)
         if st.sidebar.checkbox('Показать распределение целевой переменной'):
