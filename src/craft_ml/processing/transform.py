@@ -27,7 +27,7 @@ class ToCategory(TrainableModel):
         self.map = {}
 
     def fit(self, dataset: TableDataset) -> None:
-        for column_id, column in column_iterator(dataset.objects_data):
+        for column_id, column in column_iterator(dataset.table_data):
             unique = get_unique(column)
             if len(unique) > self.max_unique:
                 continue
@@ -36,6 +36,8 @@ class ToCategory(TrainableModel):
     def predict(self, dataset: TableDataset) -> TableDataset:
         data = dataset.table_data.copy()
         for column_id, unique_values in self.map.items():
+            if column_id not in data.columns:
+                continue
             for cur_idx, cur_value in enumerate(unique_values):
                 data[column_id] = data[column_id].replace(cur_value, cur_idx)
         return TableDataset(data, dataset.target_columns)

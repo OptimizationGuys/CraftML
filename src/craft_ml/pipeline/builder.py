@@ -63,9 +63,9 @@ class Pipeline:
                 self.cached_outputs[input_name] = input_value
         for block_idx, (cur_block, cur_params) in enumerate(zip(self.blocks, self.block_params)):
             needed_inputs = [self.cached_outputs[cur_input] for cur_input in cur_params.inputs]
-            if None in needed_inputs:
-                raise RuntimeError(f'Some inputs for block {cur_params.name} on index {block_idx} '
-                                   f'are calculated in the future')
+            # if None in needed_inputs:
+            #     raise RuntimeError(f'Some inputs for block {cur_params.name} on index {block_idx} '
+            #                        f'are calculated in the future')
             if len(needed_inputs) == 0:
                 needed_inputs = None
             elif len(needed_inputs) == 1:
