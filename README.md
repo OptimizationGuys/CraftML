@@ -57,3 +57,8 @@ Then you can easily run a demo application following this steps.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+
+## Screenshots
+![](https://github.com/vuvko/CraftML/screenshots/blob/main/1.png)
+
