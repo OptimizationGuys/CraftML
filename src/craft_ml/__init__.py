@@ -90,6 +90,43 @@ def preprocessing_pipeline() -> t.List[t.Dict[str, t.Any]]:
     ]))
 
 
+def get_classifiers() -> t.Sequence[BlockParams]:
+    knn = BlockParams(name='classifier',
+                      inputs=[],
+                      realization_class='Wrapper',
+                      realization_params=dict(
+                          class_name='sklearn.neighbors.KNeighborsClassifier',
+                          arguments=dict(
+                              n_jobs=-1
+                          ),
+                          method_to_run='id'
+                      ))
+    xgb = BlockParams(name='classifier',
+                      inputs=[],
+                      realization_class='Wrapper',
+                      realization_params=dict(
+                          class_name='xgboost.XGBClassifier',
+                          arguments=dict(
+                              random_state=100,
+                              n_jobs=-1
+                          ),
+                          method_to_run='id'
+                      ))
+    auto = BlockParams(name='classifier',
+                       inputs=[],
+                       realization_class='Wrapper',
+                       realization_params=dict(
+                           class_name='autosklearn.classification.AutoSklearnClassifier',
+                           arguments=dict(
+                               seed=100,
+                               time_left_for_this_task=120,
+                               n_jobs=-1
+                           ),
+                           method_to_run='id'
+                       ))
+    return knn, xgb, auto
+
+
 def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
     classifier_model = BlockParams(name='classifier',
                                    inputs=[],
