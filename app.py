@@ -21,17 +21,6 @@ def load_data(uploaded_file: str) -> pd.DataFrame:
     return data
 
 
-def fit_model(X: pd.DataFrame, y: pd.Series) -> callable:
-    model = xgb.XGBClassifier(random_state=27)
-    model.fit(X, y)
-    return model
-
-
-def create_predictions(model, X: pd.DataFrame) -> np.array:
-    y_pred = model.predict_proba(X)
-    return y_pred[:, 1]
-
-
 def find_categorical_features(X: pd.DataFrame) -> List[str]:
     categorical = X.select_dtypes(
         include=["object", "category"]

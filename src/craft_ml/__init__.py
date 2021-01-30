@@ -107,17 +107,3 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
         classifier_model,
         training_block, prediction_block
     ]))
-
-
-def run_app():
-    train_csv = '/home/andrey/tmp/train.csv'
-    test_csv = '/home/andrey/tmp/test.csv'
-    blocks = default_pipeline()
-    blocks_str = json.dumps(blocks)
-    print(blocks_str)
-    pipeline = Pipeline(blocks_str)
-    print('Loading OK')
-    print(pipeline.run_pipeline(dict(
-        train_path=train_csv,
-        test_path=test_csv
-    )))
