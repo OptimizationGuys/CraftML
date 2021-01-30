@@ -39,13 +39,9 @@ class TableDataset(Dataset):
         super().__init__(list(range(len(table_data))), dataset_name)
         self.table_data = table_data
         self.target_columns = target_columns
-        if self.target_columns is None:
-            self.objects_data = self.table_data
-            self.labels_data = None
-        else:
-            self.labels_data = self._get_column_data(self.table_data, self.target_columns)
-            train_columns = np.setdiff1d(self.columns, self.target_columns)
-            self.objects_data = self._get_column_data(self.table_data, train_columns)
+        self.train_columns = self.columns
+        if self.target_columns is not None:
+            self.train_columns = np.setdiff1d(self.columns, self.target_columns)
 
     @cached_property
     def columns(self) -> t.Sequence[Identifier]:
@@ -73,6 +69,14 @@ class TableDataset(Dataset):
             return table.iloc[rows]
         else:
             raise TypeError("")  # TODO: Add an error message
+
+    @cached_property
+    def objects_data(self) -> TableData:
+        return self._get_column_data(self.table_data, self.train_columns)
+
+    @cached_property
+    def labels_data(self) -> TableData:
+        return self._get_column_data(self.table_data, self.target_columns)
 
     def __getitem__(self, idx: Identifier) -> t.Tuple[Object, t.Optional[Label]]:
         obj = self._get_column_data(self.objects_data, [idx])

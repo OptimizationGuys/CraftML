@@ -9,11 +9,11 @@ def compose2(f, g):
     return lambda *a, **kw: f(g(*a, **kw))
 
 
-def compose(fns: t.Sequence[t.Callable[[...], ...]]) -> t.Callable[[...], ...]:
+def compose(fns):  #  t.Sequence[t.Callable[[...], ...]]):
     return reduce(compose2, fns)
 
 
-def forward_compose(fns: t.Sequence[t.Callable[[...], ...]]) -> t.Callable[[...], ...]:
+def forward_compose(fns):  #  t.Sequence[t.Callable[[...], ...]]) -> t.Callable[[...], ...]:
     return reduce(compose2, reversed(fns))
 
 

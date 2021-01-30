@@ -31,7 +31,10 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
     training_data = BlockParams(name='training_data',
                                 inputs=['training_data_raw'],
                                 realization_class='TablePreprocess',
-                                realization_params={'fn_name': 'craft_ml.processing.preprocess.fillna'})
+                                realization_params={'fn_names': [
+                                   'craft_ml.processing.preprocess.findna',
+                                   'craft_ml.processing.preprocess.fillna'
+                               ]})
     testing_data = BlockParams(name='testing_data',
                                inputs=['testing_data_raw'],
                                realization_class='TablePreprocess',
@@ -39,6 +42,26 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                    'craft_ml.processing.preprocess.findna',
                                    'craft_ml.processing.preprocess.fillna'
                                ]})
+    categorizer = BlockParams(name='categorizer',
+                              inputs=[],
+                              realization_class='Wrapper',
+                              realization_params=dict(
+                                  class_name='craft_ml.processing.transform.ToCategory',
+                                  arguments={},
+                                  method_to_run='id'
+                              ))
+    train_categorizer = BlockParams(name='train_categorizer',
+                                    inputs=['categorizer', 'training_data'],
+                                    realization_class='TrainModel',
+                                    realization_params={})
+    process_train = BlockParams(name='process_train',
+                                inputs=['train_categorizer', 'training_data'],
+                                realization_class='InferenceModel',
+                                realization_params={})
+    process_test = BlockParams(name='process_test',
+                               inputs=['train_categorizer', 'testing_data'],
+                               realization_class='InferenceModel',
+                               realization_params={})
     classifier_model = BlockParams(name='classifier',
                                    inputs=[],
                                    realization_class='Wrapper',
@@ -51,13 +74,13 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                        method_to_run='id'
                                    ))
     training_block = BlockParams(name='training_block',
-                                 inputs=['classifier', 'training_data'],
+                                 inputs=['classifier', 'process_train'],
                                  realization_class='TrainModel',
                                  realization_params=dict(
                                      use_wrapper='craft_ml.processing.model.SklearnClassifier'
                                  ))
     prediction_block = BlockParams(name='prediction_block',
-                                   inputs=['training_block', 'testing_data'],
+                                   inputs=['training_block', 'process_test'],
                                    realization_class='InferenceModel',
                                    realization_params={}
                                    )
@@ -65,7 +88,9 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
         train_path_block, test_path_block,
         dataset_block, training_data_raw,
         testing_data_raw, training_data,
-        testing_data, classifier_model,
+        testing_data, categorizer,
+        train_categorizer, process_train,
+        process_test, classifier_model,
         training_block, prediction_block
     ]))
 

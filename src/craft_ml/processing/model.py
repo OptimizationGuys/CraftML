@@ -10,26 +10,24 @@ class TrainableModel:
     """
     Base interface for trainable models
     """
-    def __init__(self, model: t.Any):
-        self.model = model
-
     def fit(self, dataset: Dataset) -> None:
         raise NotImplementedError
 
     def predict_proba(self, dataset: Dataset) -> np.ndarray:
         raise NotImplementedError
 
-    def predict(self, dataset: Dataset) -> t.Sequence[Label]:
+    def predict(self, dataset: Dataset) -> np.ndarray:
         raise NotImplementedError
 
 
 class SklearnClassifier(TrainableModel):
 
     def __init__(self, classifier: sklearn.base.ClassifierMixin):
-        super().__init__(classifier)
+        super().__init__()
         assert hasattr(classifier, 'fit')
         assert hasattr(classifier, 'predict')
         assert hasattr(classifier, 'predict_proba')
+        self.model = classifier
 
     def fit(self, dataset: Dataset) -> None:
         objects = ensure_numpy(dataset.get_objects())
