@@ -4,3 +4,4 @@ streamlit==0.75.0
 pandas==1.0.1
 dataclasses==0.6
 scikit_learn==0.24.1
+xgboost==0.90
