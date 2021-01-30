@@ -58,7 +58,7 @@ class Apply(Block):
     def __init__(self, method_to_call: str = '__call__'):
         self.method_to_call = method_to_call
 
-    def run(self, inputs: t.Tuple[t.Callable[[t.Any], ...], t.Any]):
+    def run(self, inputs: t.Tuple[t.Callable[[t.Any], t.Any], t.Any]) -> t.Any:
         fn = getattr(inputs[0], self.method_to_call)
         return fn(inputs[1])
 
