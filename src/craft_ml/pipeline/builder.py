@@ -44,5 +44,6 @@ class Pipeline:
                 needed_inputs = needed_inputs[0]
             else:
                 needed_inputs = tuple(needed_inputs)
-            self.cached_outputs[cur_params.name] = cur_block.run(needed_inputs)
+            res = cur_block.run(needed_inputs)
+            self.cached_outputs[cur_params.name] = res
         return self.cached_outputs[self.block_params[-1].name]

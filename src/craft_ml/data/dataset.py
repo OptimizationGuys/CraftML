@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from functools import cached_property
+from functools import cache, lru_cache
 import typing as t
 from ..mltypes import Object, Label, Identifier
 from ..utils.logger import Logger
@@ -39,20 +39,39 @@ class TableDataset(Dataset):
         super().__init__(list(range(len(table_data))), dataset_name)
         self.table_data = table_data
         self.target_columns = target_columns
-        self.train_columns = self.columns
-        if self.target_columns is not None:
-            self.train_columns = np.setdiff1d(self.columns, self.target_columns)
+        # self.train_columns = self.columns
+        # if self.target_columns is not None:
+        #     self.train_columns = np.setdiff1d(self.columns, self.target_columns)
 
-    @cached_property
-    def columns(self) -> t.Sequence[Identifier]:
-        if isinstance(self.table_data, np.ndarray):
-            return np.array(range(self.table_data.shape[1]))
-        elif isinstance(self.table_data, pd.DataFrame):
-            return self.table_data.columns.to_numpy()
+    @staticmethod
+    # @cache
+    def get_columns(table_data: TableData) -> t.Sequence[Identifier]:
+        if isinstance(table_data, np.ndarray):
+            return np.array(range(table_data.shape[1]))
+        elif isinstance(table_data, pd.DataFrame):
+            return np.array(list(sorted(table_data.columns)))
         else:
             raise TypeError("")  # TODO: Add an error message
 
+    @property
+    def columns(self) -> t.Sequence[Identifier]:
+        return self.get_columns(self.table_data)
+
     @staticmethod
+    # @cache
+    def get_train_columns(all_columns: t.Sequence[Identifier],
+                          target_columns: t.Sequence[Identifier]
+                          ) -> t.Sequence[Identifier]:
+        return np.setdiff1d(all_columns, target_columns)
+
+    @property
+    def train_columns(self):
+        if self.target_columns is None:
+            return self.columns
+        return self.get_train_columns(self.columns, self.target_columns)
+
+    @staticmethod
+    # @cache
     def _get_column_data(table: TableData, columns: t.Sequence[Identifier]) -> TableData:
         if isinstance(table, np.ndarray):
             return table[:, columns]
@@ -62,6 +81,7 @@ class TableDataset(Dataset):
             raise TypeError("")  # TODO: Add an error message
 
     @staticmethod
+    # @cache
     def _get_row_data(table: TableData, rows: t.Sequence[Identifier]) -> TableData:
         if isinstance(table, np.ndarray):
             return table[rows]
@@ -70,11 +90,11 @@ class TableDataset(Dataset):
         else:
             raise TypeError("")  # TODO: Add an error message
 
-    @cached_property
+    @property
     def objects_data(self) -> TableData:
         return self._get_column_data(self.table_data, self.train_columns)
 
-    @cached_property
+    @property
     def labels_data(self) -> TableData:
         return self._get_column_data(self.table_data, self.target_columns)
 

@@ -34,14 +34,35 @@ class ToCategory(TrainableModel):
             self.map[column_id] = unique
 
     def predict(self, dataset: TableDataset) -> TableDataset:
-        if len(self.map) < 1:
-            return dataset
+        for column_id, unique_values in self.map.items():
+            for cur_idx, cur_value in enumerate(unique_values):
+                dataset.table_data[column_id] = dataset.table_data[column_id].replace(cur_value, cur_idx)
+        return dataset
 
+    def predict_proba(self, dataset: TableDataset) -> TableDataset:
+        return self.predict(dataset)
+
+
+class DropStrings(TrainableModel):
+    def __init__(self):
+        super().__init__()
+        self.drop_ids = []
+
+    def fit(self, dataset: TableDataset) -> None:
         for column_id, column in column_iterator(dataset.objects_data):
-            if column_id not in self.map:
-                continue
-            for cur_idx, cur_value in enumerate(self.map[column_id]):
-                column[column == cur_value] = cur_idx
+            for value in column:
+                if isinstance(value, str):
+                    self.drop_ids.append(column_id)
+                    break
+
+    def predict(self, dataset: TableDataset) -> TableDataset:
+        if len(self.drop_ids) < 1:
+            return dataset
+        data = dataset.table_data
+        if isinstance(data, pd.DataFrame):
+            data.drop(columns=self.drop_ids, inplace=True)
+        else:
+            dataset.table_data = np.delete(data, self.drop_ids, axis=1)
         return dataset
 
     def predict_proba(self, dataset: TableDataset) -> TableDataset:
