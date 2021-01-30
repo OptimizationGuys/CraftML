@@ -10,6 +10,14 @@ Most users will prefer using CraftML without modification. Advanced users will b
 
 Download the distribution, load your data into it, expect the result.
 
+## Easy local run
+
+Move to the directory with this project, then run
+```
+pip install -e .
+streamlit app.py
+```
+
 
 ## PC Requirements
 * OS: Ubuntu 18.04
