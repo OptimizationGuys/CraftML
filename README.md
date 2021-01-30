@@ -22,7 +22,7 @@ Then you can easily run a demo application following this steps.
 
 2. Move to the directory with this project
     ```
-    cd CraftMl
+    cd CraftML
     ```
 3. Then run
     ```
