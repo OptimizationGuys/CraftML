@@ -213,5 +213,5 @@ try:
             tmp_download_link = download_link(submit, 'prediction.csv', 'Скачать прогнозы')
             st.markdown(tmp_download_link, unsafe_allow_html=True)
 
-except ValueError:
-    pass
+except ValueError as err:
+    st.text(f'{err.__class__} occured: {err}')
