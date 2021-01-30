@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
-
+from setuptools import setup, find_packages
 
 setup(
     name="craft_ml",
@@ -9,7 +8,7 @@ setup(
     version="0.2.2",
     package_dir={"": "src"},
     zip_safe=True,
-    packages=["craft_ml"],
+    packages=find_packages('src'),
     install_requires=[
         "numpy==1.18.1",
         "scikit_learn==0.24.1",
