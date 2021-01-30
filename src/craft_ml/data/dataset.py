@@ -67,7 +67,12 @@ class TableDataset(Dataset):
 
     @staticmethod
     def _get_row_data(table: TableData, rows: t.Sequence[Identifier]) -> TableData:
-        raise NotImplementedError
+        if isinstance(table, np.ndarray):
+            return table[rows]
+        elif isinstance(table, pd.DataFrame):
+            return table.iloc[rows]
+        else:
+            raise TypeError("")  # TODO: Add an error message
 
     def __getitem__(self, idx: Identifier) -> t.Tuple[Object, t.Optional[Label]]:
         obj = self._get_column_data(self.objects_data, [idx])

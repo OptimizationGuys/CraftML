@@ -15,5 +15,5 @@ class PandasLoader(Block):
         test_columns = test_data.columns.to_numpy()
         target_columns = np.setdiff1d(train_columns, test_columns)
         train_dataset = TableDataset(train_data, target_columns)
-        test_dataset = TableDataset(test_data, target_columns)
+        test_dataset = TableDataset(test_data)
         return train_dataset, test_dataset

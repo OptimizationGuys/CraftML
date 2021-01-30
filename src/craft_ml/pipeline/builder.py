@@ -11,15 +11,15 @@ class Pipeline:
         self.cached_outputs: t.Dict[str, t.Any] = {}
         objects = json.loads(serialized_pipeline)
         for cur_object in objects:
-            cur_params = BlockParams(name=cur_object.name,
-                                     inputs=cur_object.inputs,
-                                     realization_class=cur_object.realization_class,
-                                     realization_params=cur_object.realization_params)
+            cur_params = BlockParams(name=cur_object['name'],
+                                     inputs=cur_object['inputs'],
+                                     realization_class=cur_object['realization_class'],
+                                     realization_params=cur_object['realization_params'])
             block_class = getattr(block_provider, cur_params.realization_class)
             cur_block = block_class(**cur_params.realization_params)
-            self.block_params.append(block_class)
+            self.block_params.append(cur_params)
             self.blocks.append(cur_block)
-            self.cached_outputs[cur_object.name] = None
+            self.cached_outputs[cur_params.name] = None
 
     def serialize(self) -> str:
         serializable_params = []
