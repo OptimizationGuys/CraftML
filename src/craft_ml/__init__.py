@@ -97,7 +97,6 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                    realization_params=dict(
                                        class_name='sklearn.neighbors.KNeighborsClassifier',
                                        arguments=dict(
-                                           n_neighbors=5,
                                            n_jobs=-1
                                        ),
                                        method_to_run='id'
