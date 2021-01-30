@@ -10,13 +10,25 @@ Most users will prefer using CraftML without modification. Advanced users will b
 
 Download the distribution, load your data into it, expect the result.
 
-## Easy local run
+## Run locally
 
-Move to the directory with this project, then run
-```
-pip install -e .
-streamlit app.py
-```
+You'll need `python` interpreter and `streamlit` python package.
+Then you can easily run a demo application following this steps.
+
+1. Clone the repository:
+    ```
+    git clone https://github.com/OptimizationGuys/CraftML.git
+    ```
+
+2. Move to the directory with this project
+    ```
+    cd CraftMl
+    ```
+3. Then run
+    ```
+    pip install -e .
+    streamlit run app.py
+    ```
 
 
 ## PC Requirements
