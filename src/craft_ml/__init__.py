@@ -7,7 +7,7 @@ import typing as t
 
 def loading_pipeline() -> t.List[t.Dict[str, t.Any]]:
     dataset_block = BlockParams(name='pandas_data',
-                                inputs=['train_path', 'test_path'],
+                                inputs=['train_path', 'test_path', 'target_column'],
                                 realization_class='PandasLoader',
                                 realization_params={})
     training_data_raw = BlockParams(name='training_data_raw',
@@ -131,6 +131,11 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                  realization_params=dict(
                                      use_wrapper='craft_ml.processing.model.SklearnClassifier'
                                  ))
+    prediction_train_block = BlockParams(name='prediction_train_block',
+                                         inputs=['training_block', 'split_train_data'],
+                                         realization_class='InferenceModel',
+                                         realization_params={}
+                                         )
     prediction_val_block = BlockParams(name='prediction_val_block',
                                        inputs=['training_block', 'split_val_data'],
                                        realization_class='InferenceModel',
@@ -144,7 +149,7 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
     return list(map(BlockParams.to_dict, [
         classifier_model, split_block,
         splitter, train_val_data, split_train_data, split_val_data,
-        training_block, prediction_val_block, prediction_test_block
+        training_block, prediction_train_block, prediction_val_block, prediction_test_block
     ]))
 
 

@@ -34,10 +34,11 @@ class ToCategory(TrainableModel):
             self.map[column_id] = unique
 
     def predict(self, dataset: TableDataset) -> TableDataset:
+        data = dataset.table_data.copy()
         for column_id, unique_values in self.map.items():
             for cur_idx, cur_value in enumerate(unique_values):
-                dataset.table_data[column_id] = dataset.table_data[column_id].replace(cur_value, cur_idx)
-        return dataset
+                data[column_id] = data[column_id].replace(cur_value, cur_idx)
+        return TableDataset(data, dataset.target_columns)
 
     def predict_proba(self, dataset: TableDataset) -> TableDataset:
         return self.predict(dataset)
@@ -60,10 +61,10 @@ class DropStrings(TrainableModel):
             return dataset
         data = dataset.table_data
         if isinstance(data, pd.DataFrame):
-            data.drop(columns=self.drop_ids, inplace=True)
+            data = data.drop(columns=self.drop_ids, inplace=False)
         else:
-            dataset.table_data = np.delete(data, self.drop_ids, axis=1)
-        return dataset
+            data = np.delete(data, self.drop_ids, axis=1)
+        return TableDataset(data, dataset.target_columns)
 
     def predict_proba(self, dataset: TableDataset) -> TableDataset:
         return self.predict(dataset)
