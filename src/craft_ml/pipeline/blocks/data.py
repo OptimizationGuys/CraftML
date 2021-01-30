@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import typing as t
-from ...data.dataset import TableDataset
+from ...data.dataset import Dataset, TableDataset
 from ..block import Block
 
 
@@ -17,3 +17,8 @@ class PandasLoader(Block):
         train_dataset = TableDataset(train_data, target_columns)
         test_dataset = TableDataset(test_data)
         return train_dataset, test_dataset
+
+
+class NextSplit(Block):
+    def run(self, inputs: t.Generator[t.Tuple[Dataset, Dataset], None, None]) -> t.Tuple[Dataset, Dataset]:
+        return next(inputs)

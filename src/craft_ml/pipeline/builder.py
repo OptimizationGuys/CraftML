@@ -21,6 +21,23 @@ class Pipeline:
             self.blocks.append(cur_block)
             self.cached_outputs[cur_params.name] = None
 
+    def find_block(self, name: str) -> t.Tuple[BlockParams, Block, t.Any]:
+        found_idx = None
+        for cur_idx, cur_params in enumerate(self.block_params):
+            if cur_params.name == name:
+                found_idx = cur_idx
+        if found_idx is None:
+            raise IndexError(f'Could not find block {name} in the pipeline.')
+        return self.block_params[found_idx], self.blocks[found_idx], self.cached_outputs[name]
+
+    def get_output_names(self) -> t.List[str]:
+        return [cur_params.name for cur_params in self.block_params]
+
+    def get_placeholders(self) -> t.List[str]:
+        inputs = set(sum([cur_params.inputs for cur_params in self.block_params], []))
+        outputs = set(self.get_output_names())
+        return list(inputs - outputs)
+
     def serialize(self) -> str:
         serializable_params = []
         for cur_params in self.block_params:
@@ -31,6 +48,11 @@ class Pipeline:
                      realization_params=cur_params.realization_params)
             )
         return json.dumps(serializable_params)
+
+    def get_output(self, name: str):
+        if name not in self.cached_outputs:
+            raise IndexError(f'Could not found block with a name {name}')
+        return self.cached_outputs[name]
 
     def run_pipeline(self, inputs: t.Optional[t.Dict[str, t.Any]] = None) -> t.Any:
         if inputs is not None:

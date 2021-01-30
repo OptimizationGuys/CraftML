@@ -8,7 +8,7 @@ from ..data.dataset import Dataset
 
 class DataSplit:
 
-    def get_splits(self, dataset: Dataset) -> t.Generator[t.Tuple[Dataset, Dataset]]:
+    def get_splits(self, dataset: Dataset) -> t.Generator[t.Tuple[Dataset, Dataset], None, None]:
         raise NotImplementedError
 
 
@@ -23,7 +23,7 @@ class TrainTestSplit(DataSplit):
         self.random_state = random_state
         self.shuffle = shuffle
 
-    def get_splits(self, dataset: Dataset) -> t.Generator[t.Tuple[Dataset, Dataset]]:
+    def get_splits(self, dataset: Dataset) -> t.Generator[t.Tuple[Dataset, Dataset], None, None]:
         all_rows = dataset.ids
         train_rows, test_rows = model_selection.train_test_split(all_rows,
                                                                  train_size=self.train_size,

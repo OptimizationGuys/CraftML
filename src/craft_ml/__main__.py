@@ -2,4 +2,5 @@ import craft_ml
 
 
 if __name__ == '__main__':
-    craft_ml.run_app()
+    craft_ml.default_pipeline()
+    print('OK')

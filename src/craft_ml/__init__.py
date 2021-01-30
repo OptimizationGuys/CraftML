@@ -5,7 +5,7 @@ from .pipeline.builder import Pipeline
 import typing as t
 
 
-def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
+def loading_pipeline() -> t.List[t.Dict[str, t.Any]]:
     dataset_block = BlockParams(name='pandas_data',
                                 inputs=['train_path', 'test_path'],
                                 realization_class='PandasLoader',
@@ -18,14 +18,20 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                    inputs=['pandas_data'],
                                    realization_class='GetIdx',
                                    realization_params={'index': 1})
+    return list(map(BlockParams.to_dict, [
+        dataset_block, training_data_raw, testing_data_raw
+    ]))
+
+
+def preprocessing_pipeline() -> t.List[t.Dict[str, t.Any]]:
     training_data = BlockParams(name='training_data',
                                 inputs=['training_data_raw'],
                                 realization_class='TablePreprocess',
                                 realization_params={'fn_names': [
-                                   'craft_ml.processing.preprocess.drop_index',
-                                   'craft_ml.processing.preprocess.findna',
-                                   'craft_ml.processing.preprocess.fillna'
-                               ]})
+                                    'craft_ml.processing.preprocess.drop_index',
+                                    'craft_ml.processing.preprocess.findna',
+                                    'craft_ml.processing.preprocess.fillna'
+                                ]})
     testing_data = BlockParams(name='testing_data',
                                inputs=['testing_data_raw'],
                                realization_class='TablePreprocess',
@@ -46,11 +52,11 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                     inputs=['categorizer', 'training_data'],
                                     realization_class='TrainModel',
                                     realization_params={})
-    process_train = BlockParams(name='process_train',
+    process_train = BlockParams(name='categorized_train',
                                 inputs=['train_categorizer', 'training_data'],
                                 realization_class='InferenceModel',
                                 realization_params={})
-    process_test = BlockParams(name='process_test',
+    process_test = BlockParams(name='ategorized_test',
                                inputs=['train_categorizer', 'testing_data'],
                                realization_class='InferenceModel',
                                realization_params={})
@@ -66,14 +72,25 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                 inputs=['dropper', 'training_data'],
                                 realization_class='TrainModel',
                                 realization_params={})
-    drop_train = BlockParams(name='drop_train',
-                             inputs=['train_dropper', 'process_train'],
+    drop_train = BlockParams(name='process_test',
+                             inputs=['train_dropper', 'ategorized_train'],
                              realization_class='InferenceModel',
                              realization_params={})
-    drop_test = BlockParams(name='drop_test',
-                            inputs=['train_dropper', 'process_test'],
+    drop_test = BlockParams(name='process_test',
+                            inputs=['train_dropper', 'ategorized_test'],
                             realization_class='InferenceModel',
                             realization_params={})
+    return list(map(BlockParams.to_dict, [
+        training_data,
+        testing_data, categorizer,
+        train_categorizer, process_train,
+        process_test,
+        dropper, train_dropper,
+        drop_train, drop_test
+    ]))
+
+
+def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
     classifier_model = BlockParams(name='classifier',
                                    inputs=[],
                                    realization_class='Wrapper',
@@ -86,24 +103,17 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                        method_to_run='id'
                                    ))
     training_block = BlockParams(name='training_block',
-                                 inputs=['classifier', 'drop_train'],
+                                 inputs=['classifier', 'process_train'],
                                  realization_class='TrainModel',
                                  realization_params=dict(
                                      use_wrapper='craft_ml.processing.model.SklearnClassifier'
                                  ))
     prediction_block = BlockParams(name='prediction_block',
-                                   inputs=['training_block', 'drop_test'],
+                                   inputs=['training_block', 'process_test'],
                                    realization_class='InferenceModel',
                                    realization_params={}
                                    )
     return list(map(BlockParams.to_dict, [
-        dataset_block, training_data_raw,
-        testing_data_raw, training_data,
-        testing_data, categorizer,
-        train_categorizer, process_train,
-        process_test,
-        dropper, train_dropper,
-        drop_train, drop_test,
         classifier_model,
         training_block, prediction_block
     ]))
