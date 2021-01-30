@@ -60,5 +60,5 @@ Then you can easily run a demo application following this steps.
 
 
 ## Screenshots
-![](https://github.com/vuvko/CraftML/screenshots/blob/main/1.png)
+![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/1.png)
 
