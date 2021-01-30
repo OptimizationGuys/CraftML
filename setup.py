@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name="craft_ml",
     description="",
-    version="0.2.1",
+    version="0.2.2",
     package_dir={"": "src"},
     zip_safe=True,
     packages=["craft_ml"],
@@ -16,6 +16,7 @@ setup(
         "matplotlib==3.1.3",
         "pandas==1.0.1",
         "streamlit==0.75.0",
+        "dataclasses==0.6"
     ],
     python_requires='>=3.7',
     setup_requires=[],
