@@ -50,10 +50,11 @@ def get_pipeline() -> cml.Pipeline:
 
 
 @st.cache
-def get_predictions(train_file: str, test_file: str, pipeline: cml.Pipeline) -> np.ndarray:
+def get_predictions(train_file: str, test_file: str, train_size: float, pipeline: cml.Pipeline) -> np.ndarray:
     y_pred = pipeline.run_pipeline(dict(
         train_path=train_file,
-        test_path=test_file
+        test_path=test_file,
+        train_size=train_size
     ))
     return y_pred[:, 1]
 
@@ -128,8 +129,8 @@ try:
     # st.text(categorical_features)
 
     st.title("Обучение модели")
-    # train_size = st.slider(
-    #     label="Доля наблюдений для обучения модели", min_value=0.0, max_value=1.0, value=0.7, step=0.01)
+    train_size = st.slider(
+        label="Доля наблюдений для обучения модели", min_value=0.0, max_value=1.0, value=0.7, step=0.01)
     # train_, valid_ = train_test_split(
     #     train, train_size=train_size, random_state=27, shuffle=True
     # )
@@ -139,7 +140,7 @@ try:
     if st.checkbox('Обучить модель'):
         # model = fit_model(train, target)
         pipeline = get_pipeline()
-        predictions = get_predictions(train_data, test_data, pipeline)
+        predictions = get_predictions(train_data, test_data, train_size, pipeline)
         st.text("Модель обучена!!!")
 
         # y_valid_pred = create_predictions(model, valid_)

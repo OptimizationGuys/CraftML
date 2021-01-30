@@ -48,18 +48,25 @@ class Initializer(Block):
         self.class_init = get_class(class_name)
         self.arguments = arguments
 
-    def run(self, inputs: t.Optional[KwArgs] = None) -> object:
+    def run(self, inputs: t.Optional[t.Union[KwArgs, t.Sequence[t.Any]]] = None) -> object:
+        cur_kwargs = self.arguments
         if inputs is not None:
-            self.arguments.update(inputs)
-        return self.class_init(**self.arguments)
+            if isinstance(inputs, dict):
+                cur_args = []
+                cur_kwargs.update(inputs)
+            elif isinstance(inputs, list) or isinstance(inputs, tuple):
+                cur_args = inputs
+            else:
+                cur_args = [inputs]
+        return self.class_init(*cur_args, **cur_kwargs)
 
 
 class Apply(Block):
-    def __init__(self, method_to_call: str = '__call__'):
-        self.method_to_call = method_to_call
+    def __init__(self, method_to_run: str = '__call__'):
+        self.method_to_run = method_to_run
 
     def run(self, inputs: t.Tuple[t.Callable[[t.Any], t.Any], t.Any]) -> t.Any:
-        fn = getattr(inputs[0], self.method_to_call)
+        fn = getattr(inputs[0], self.method_to_run)
         return fn(inputs[1])
 
 

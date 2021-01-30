@@ -9,12 +9,16 @@ class Pipeline:
         self.block_params: t.List[BlockParams] = []
         self.blocks: t.List[Block] = []
         self.cached_outputs: t.Dict[str, t.Any] = {}
+        self.names = set()
         objects = json.loads(serialized_pipeline)
         for cur_object in objects:
             cur_params = BlockParams(name=cur_object['name'],
                                      inputs=cur_object['inputs'],
                                      realization_class=cur_object['realization_class'],
                                      realization_params=cur_object['realization_params'])
+            if cur_params.name in self.names:
+                raise RuntimeError(f'Duplicated block with a name {cur_params.name}')
+            self.names.update(cur_params.name)
             block_class = getattr(block_provider, cur_params.realization_class)
             cur_block = block_class(**cur_params.realization_params)
             self.block_params.append(cur_params)
@@ -31,12 +35,11 @@ class Pipeline:
         return self.block_params[found_idx], self.blocks[found_idx], self.cached_outputs[name]
 
     def get_output_names(self) -> t.List[str]:
-        return [cur_params.name for cur_params in self.block_params]
+        return list(self.names)
 
     def get_placeholders(self) -> t.List[str]:
         inputs = set(sum([cur_params.inputs for cur_params in self.block_params], []))
-        outputs = set(self.get_output_names())
-        return list(inputs - outputs)
+        return list(inputs - self.names)
 
     def serialize(self) -> str:
         serializable_params = []

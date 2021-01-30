@@ -56,7 +56,7 @@ def preprocessing_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                 inputs=['train_categorizer', 'training_data'],
                                 realization_class='InferenceModel',
                                 realization_params={})
-    process_test = BlockParams(name='ategorized_test',
+    process_test = BlockParams(name='categorized_test',
                                inputs=['train_categorizer', 'testing_data'],
                                realization_class='InferenceModel',
                                realization_params={})
@@ -72,12 +72,12 @@ def preprocessing_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                 inputs=['dropper', 'training_data'],
                                 realization_class='TrainModel',
                                 realization_params={})
-    drop_train = BlockParams(name='process_test',
-                             inputs=['train_dropper', 'ategorized_train'],
+    drop_train = BlockParams(name='process_train',
+                             inputs=['train_dropper', 'categorized_train'],
                              realization_class='InferenceModel',
                              realization_params={})
     drop_test = BlockParams(name='process_test',
-                            inputs=['train_dropper', 'ategorized_test'],
+                            inputs=['train_dropper', 'categorized_test'],
                             realization_class='InferenceModel',
                             realization_params={})
     return list(map(BlockParams.to_dict, [
@@ -106,23 +106,45 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
                               inputs=['train_size'],
                               realization_class='Initializer',
                               realization_params=dict(
-                                  class_name='craft_ml.data.TrainTestSplit',
+                                  class_name='craft_ml.data.split.TrainTestSplit',
                                   arguments={'random_state': 100, 'shuffle': True}
                               ))
+    splitter = BlockParams(name='splitter',
+                           inputs=['split_block', 'process_train'],
+                           realization_class='Apply',
+                           realization_params={'method_to_run': 'get_splits'})
+    train_val_data = BlockParams(name='train_val_data',
+                                 inputs=['splitter'],
+                                 realization_class='NextSplit',
+                                 realization_params={})
+    split_train_data = BlockParams(name='split_train_data',
+                                   inputs=['train_val_data'],
+                                   realization_class='GetIdx',
+                                   realization_params={'index': 0})
+    split_val_data = BlockParams(name='split_val_data',
+                                 inputs=['train_val_data'],
+                                 realization_class='GetIdx',
+                                 realization_params={'index': 1})
     training_block = BlockParams(name='training_block',
-                                 inputs=['classifier', 'process_train'],
+                                 inputs=['classifier', 'split_train_data'],
                                  realization_class='TrainModel',
                                  realization_params=dict(
                                      use_wrapper='craft_ml.processing.model.SklearnClassifier'
                                  ))
-    prediction_block = BlockParams(name='prediction_block',
-                                   inputs=['training_block', 'process_test'],
-                                   realization_class='InferenceModel',
-                                   realization_params={}
-                                   )
+    prediction_val_block = BlockParams(name='prediction_val_block',
+                                       inputs=['training_block', 'split_val_data'],
+                                       realization_class='InferenceModel',
+                                       realization_params={}
+                                       )
+    prediction_test_block = BlockParams(name='prediction_test_block',
+                                        inputs=['training_block', 'process_test'],
+                                        realization_class='InferenceModel',
+                                        realization_params={}
+                                        )
     return list(map(BlockParams.to_dict, [
-        classifier_model,
-        training_block, prediction_block
+        classifier_model, split_block,
+        splitter, train_val_data, split_train_data, split_val_data,
+        training_block, prediction_val_block, prediction_test_block
     ]))
 
 
