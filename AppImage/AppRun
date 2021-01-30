@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# chmod +x ./app.py
+git clone https://github.com/OptimizationGuys/CraftML.git
 
-streamlit run ./app.py
+streamlit run ./CraftML/app.py
+rm -rf ./CraftML
