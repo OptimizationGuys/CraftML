@@ -16,7 +16,11 @@ setup(
         "matplotlib",
         "tqdm",
         "pathos",
-        "dataclasses"
+        "dataclasses",
+        "streamlit",
+        "xgboost",
+        "category_encoders",
+        "cache"
     ],
     setup_requires=[],
     entry_points={
