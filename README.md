@@ -62,6 +62,7 @@ Then you can easily run a demo application following this steps.
 ## Screenshots
 ![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/1.png)
 ![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/2.png)
+![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/2-1.png)
 ![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/3.png)
 ![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/4.png)
 ![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/5.png)
