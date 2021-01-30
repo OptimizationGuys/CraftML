@@ -2,7 +2,7 @@ import importlib
 import typing as t
 from ..block import Block
 from ...mltypes import KwArgs
-from ...utils.common import initialize_class
+from ...utils.common import initialize_class, get_class
 
 
 class IdentityBlock(Block):
@@ -41,6 +41,26 @@ class Flatten(Block):
             else:
                 flat_inputs.append(el)
         return flat_inputs
+
+
+class Initializer(Block):
+    def __init__(self, class_name: str, arguments: KwArgs):
+        self.class_init = get_class(class_name)
+        self.arguments = arguments
+
+    def run(self, inputs: t.Optional[KwArgs] = None) -> object:
+        if inputs is not None:
+            self.arguments.update(inputs)
+        return self.class_init(**self.arguments)
+
+
+class Apply(Block):
+    def __init__(self, method_to_call: str = '__call__'):
+        self.method_to_call = method_to_call
+
+    def run(self, inputs: t.Tuple[t.Callable[[t.Any], ...], t.Any]):
+        fn = getattr(inputs[0], self.method_to_call)
+        return fn(inputs[1])
 
 
 class Wrapper(Block):

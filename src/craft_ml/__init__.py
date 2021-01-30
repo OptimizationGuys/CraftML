@@ -102,6 +102,13 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                        ),
                                        method_to_run='id'
                                    ))
+    split_block = BlockParams(name='split_block',
+                              inputs=['train_size'],
+                              realization_class='Initializer',
+                              realization_params=dict(
+                                  class_name='craft_ml.data.TrainTestSplit',
+                                  arguments={'random_state': 100, 'shuffle': True}
+                              ))
     training_block = BlockParams(name='training_block',
                                  inputs=['classifier', 'process_train'],
                                  realization_class='TrainModel',
@@ -117,3 +124,7 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
         classifier_model,
         training_block, prediction_block
     ]))
+
+
+def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
+    return loading_pipeline() + preprocessing_pipeline() + classifier_pipeline()
