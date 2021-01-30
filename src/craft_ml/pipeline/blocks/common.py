@@ -10,6 +10,9 @@ class IdentityBlock(Block):
         return inputs
 
 
+Placeholder = IdentityBlock
+
+
 class Constant(Block):
     def __init__(self, value: t.Any):
         self.value = value

@@ -31,7 +31,7 @@ class SklearnClassifier(TrainableModel):
 
     def fit(self, dataset: Dataset) -> None:
         objects = dataset.get_objects()
-        labels = dataset.get_labels()
+        labels = ensure_numpy(dataset.get_labels())[:, 0]
         self.model.fit(objects, labels)
 
     def predict_proba(self, dataset: Dataset) -> np.ndarray:

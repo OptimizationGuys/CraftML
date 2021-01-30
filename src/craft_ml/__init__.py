@@ -6,16 +6,6 @@ import typing as t
 
 
 def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
-    train_csv = '/home/andrey/tmp/train.csv'
-    test_csv = '/home/andrey/tmp/test.csv'
-    train_path_block = BlockParams(name='train_path',
-                                   inputs=[],
-                                   realization_class='Constant',
-                                   realization_params={'value': train_csv})
-    test_path_block = BlockParams(name='test_path',
-                                  inputs=[],
-                                  realization_class='Constant',
-                                  realization_params={'value': test_csv})
     dataset_block = BlockParams(name='pandas_data',
                                 inputs=['train_path', 'test_path'],
                                 realization_class='PandasLoader',
@@ -107,7 +97,6 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                    realization_params={}
                                    )
     return list(map(BlockParams.to_dict, [
-        train_path_block, test_path_block,
         dataset_block, training_data_raw,
         testing_data_raw, training_data,
         testing_data, categorizer,
@@ -121,9 +110,14 @@ def default_pipeline() -> t.List[t.Dict[str, t.Any]]:
 
 
 def run_app():
+    train_csv = '/home/andrey/tmp/train.csv'
+    test_csv = '/home/andrey/tmp/test.csv'
     blocks = default_pipeline()
     blocks_str = json.dumps(blocks)
     print(blocks_str)
     pipeline = Pipeline(blocks_str)
     print('Loading OK')
-    print(pipeline.run_pipeline())
+    print(pipeline.run_pipeline(dict(
+        train_path=train_csv,
+        test_path=test_csv
+    )))

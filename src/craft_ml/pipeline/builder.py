@@ -32,7 +32,10 @@ class Pipeline:
             )
         return json.dumps(serializable_params)
 
-    def run_pipeline(self) -> t.Any:
+    def run_pipeline(self, inputs: t.Optional[t.Dict[str, t.Any]] = None) -> t.Any:
+        if inputs is not None:
+            for input_name, input_value in inputs.items():
+                self.cached_outputs[input_name] = input_value
         for block_idx, (cur_block, cur_params) in enumerate(zip(self.blocks, self.block_params)):
             needed_inputs = [self.cached_outputs[cur_input] for cur_input in cur_params.inputs]
             if None in needed_inputs:
