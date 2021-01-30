@@ -14,18 +14,16 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 
 
 @st.cache
-def load_data(uploaded_file: str) -> pd.DataFrame:
-    data = pd.read_csv(uploaded_file)
-    return data
+def read_csv(uploaded_file) -> pd.DataFrame:
+    return pd.read_csv(uploaded_file)
 
 
-@st.cache
-def guess_target_name(train_path: str, test_path: str) -> str:
-    blocks_str = json.dumps(cml.loading_pipeline())
-    load_pipeline = cml.Pipeline(blocks_str)
-    load_pipeline.run_pipeline({'train_path': train_path, 'test_path': test_path, 'target_column': None})
-    train_dataset = load_pipeline.get_output('training_data_raw')
-    return train_dataset.target_columns[0]
+# @st.cache
+def guess_target_name(train_df: pd.DataFrame, test_df: pd.DataFrame) -> str:
+    train_columns = train_df.columns.to_numpy()
+    test_columns = test_df.columns.to_numpy()
+    target_columns = np.setdiff1d(train_columns, test_columns)
+    return target_columns[0]
 
 
 def find_categorical_features(X: pd.DataFrame) -> List[str]:
@@ -100,7 +98,8 @@ test_data = st.sidebar.file_uploader("Выбрать данные для при�
 
 try:
     if train_data and test_data:
-        train = load_data(train_data)
+        train = read_csv(train_data)
+        test = read_csv(test_data)
         if st.sidebar.checkbox('Показать сырые данные'):
             st.write(train.head())
 
@@ -108,7 +107,7 @@ try:
         target_name = st.sidebar.selectbox(
             'Выбрать столбец с целевой переменной',
             train.columns,
-            index=list(train.columns).index(guess_target_name(train_data, test_data))
+            index=list(train.columns).index(guess_target_name(train, test))
         )
         target, train = train[target_name], train.drop(target_name, axis=1)
         if st.sidebar.checkbox('Показать распределение целевой переменной'):

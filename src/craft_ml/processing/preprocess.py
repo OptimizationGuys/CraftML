@@ -36,3 +36,8 @@ def drop_index(dataset: TableDataset, index_id: Identifier = 0) -> TableDataset:
         pos_id = index_id if index_id >= 0 else data.shape[1] + index_id
         data = np.delete(data, pos_id, axis=1)
     return TableDataset(data, dataset.target_columns)
+
+
+def drop_columns(dataset: TableDataset, columns: t.Sequence[Identifier]) -> TableDataset:
+    data = dataset.table_data.drop(columns, axis=1)
+    return TableDataset(data, dataset.target_columns)
