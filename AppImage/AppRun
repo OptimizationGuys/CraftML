@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# chmod +x ./app.py
+
+streamlit run ./app.py
