@@ -14,13 +14,10 @@ setup(
         "numpy",
         "scikit-learn",
         "matplotlib",
-        "tqdm",
-        "pathos",
         "dataclasses",
         "streamlit",
         "xgboost",
         "category_encoders",
-        "cache"
     ],
     setup_requires=[],
     entry_points={

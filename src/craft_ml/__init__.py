@@ -132,8 +132,9 @@ def classifier_pipeline() -> t.List[t.Dict[str, t.Any]]:
                                    inputs=[],
                                    realization_class='Wrapper',
                                    realization_params=dict(
-                                       class_name='sklearn.neighbors.KNeighborsClassifier',
+                                       class_name='xgboost.XGBClassifier',
                                        arguments=dict(
+                                           random_state=100,
                                            n_jobs=-1
                                        ),
                                        method_to_run='id'
