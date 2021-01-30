@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name="craft_ml",
     description="",
-    version="0.2.2",
+    version="0.2.3",
     package_dir={"": "src"},
     zip_safe=True,
     packages=find_packages('src'),
