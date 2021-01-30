@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
-from functools import cache, lru_cache
 import typing as t
 from ..mltypes import Object, Label, Identifier
-from ..utils.logger import Logger
 
 
 class Dataset:

@@ -15,7 +15,8 @@ setup(
         "scikit-learn",
         "matplotlib",
         "tqdm",
-        "pathos"
+        "pathos",
+        "dataclasses"
     ],
     setup_requires=[],
     entry_points={
