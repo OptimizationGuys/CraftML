@@ -64,10 +64,5 @@ Then you can easily run a demo application following this steps.
 
 
 ## Screenshots
-<img src="screenshots/1.png" height="200">
-<img src="screenshots/2.png" height="200">
-<img src="screenshots/2-1.png" height="200">
-<img src="screenshots/3.png" width="200"> <br />
-<img src="screenshots/4.png" height="150">
-<img src="screenshots/5.png" height="150"> <br />
-<img src="screenshots/6.png" height="200">
+<img src="screenshots/full_app.png" width="800">
+<img src="screenshots/target_distrib.png" height="150">
