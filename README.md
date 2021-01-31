@@ -64,5 +64,7 @@ Then you can easily run a demo application following this steps.
 
 
 ## Screenshots
+Screencast - https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/CraftML%20-%20video
+
 <img src="screenshots/full_app.png" width="800">
 <img src="screenshots/target_distrib.png" height="150">
