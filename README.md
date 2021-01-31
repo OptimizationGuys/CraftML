@@ -64,10 +64,10 @@ Then you can easily run a demo application following this steps.
 
 
 ## Screenshots
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/1.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/2.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/2-1.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/3.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/4.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/5.png)
-![](https://github.com/OptimizationGuys/CraftML/blob/main/screenshots/6.png)
+<img src="screenshots/1.png" height="200">
+<img src="screenshots/2.png" height="200">
+<img src="screenshots/2-1.png" height="200">
+<img src="screenshots/3.png" width="200"> <br />
+<img src="screenshots/4.png" height="150">
+<img src="screenshots/5.png" height="150"> <br />
+<img src="screenshots/6.png" height="200">
