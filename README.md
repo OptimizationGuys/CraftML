@@ -10,6 +10,8 @@ Most users will prefer using CraftML without modification. Advanced users will b
 
 Download the distribution, load your data into it, expect the result.
 
+Web version - https://share.streamlit.io/nv-27/craft_ml_app/app.py
+
 ## Run locally
 
 You'll need `python` interpreter and `streamlit` python package.
