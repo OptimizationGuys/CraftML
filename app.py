@@ -38,7 +38,7 @@ def find_categorical_features(X: pd.DataFrame) -> List[str]:
 
 
 def find_best_threshold(y_true: np.array, y_pred: np.array, thresholds: np.ndarray) -> float:
-    # thresholds = np.arange(0, 1, 0.01)
+    #thresholds = np.arange(0, 1, 0.01)
     scores = []
 
     for p in thresholds:
@@ -100,6 +100,19 @@ train_data = st.sidebar.file_uploader("Выбрать данные для обу
 st.sidebar.title('Тестовая выборка')
 test_data = st.sidebar.file_uploader("Выбрать данные для применения модели")
 
+st.sidebar.title("Доля наблюдений для обучения модели")
+st.sidebar.text("По умолчанию, 70%")
+train_size = st.sidebar.slider(
+    label="Доля наблюдений для обучения модели",
+    min_value=0.0, max_value=1.0, value=0.7, step=0.01
+)
+st.sidebar.title("Порог классификации")
+st.sidebar.text("По умолчанию, 50%")
+threshold = st.sidebar.slider(
+    label="Значение вероятности, при котором объект относится к классу 1, ",
+    min_value=0.0, max_value=1.0, value=0.5, step=0.01
+)
+
 try:
     if train_data and test_data:
         train = read_csv(train_data)
@@ -119,7 +132,12 @@ try:
         if st.sidebar.checkbox('Показать распределение целевой переменной'):
             st.title("Распределение целевой переменной")
             hist_values = target.value_counts()
-            st.bar_chart(hist_values)
+            fig, ax = plt.subplots()
+            ax.bar(hist_values.index, hist_values.values, color="#ff294d")
+            ax.set_xticks(hist_values.index)
+            ax.set_xticklabels(hist_values.index, rotation='vertical')
+            st.pyplot(fig)
+            #st.bar_chart(hist_values, color="ff294d")
 
         st.sidebar.title("Служебные переменные")
         msg = (
@@ -148,9 +166,6 @@ try:
         # st.text(categorical_features)
 
         st.title("Обучение модели")
-        train_size = st.slider(
-            label="Доля наблюдений для обучения модели", min_value=0.0, max_value=1.0, value=0.7, step=0.01)
-
         if st.checkbox('Обучить модель'):
             # model = fit_model(train, target)
             pipeline = get_pipeline()
@@ -168,9 +183,9 @@ try:
 
             fig, axes = plt.subplots(1, 2, figsize=(20, 10))
             fpr, tpr, _ = roc_curve(valid_target, y_valid_pred)
-            axes[0].plot(fpr, tpr, linewidth=3, label=f"Valid score = {round(valid_score, 4)}")
+            axes[0].plot(fpr, tpr, linewidth=3, label=f"Valid score = {round(valid_score, 4)}", color="#ff294d")
             fpr, tpr, _ = roc_curve(train_target, y_train_pred)
-            axes[0].plot(fpr, tpr, linewidth=3, label=f"Train score = {round(train_score, 4)}")
+            axes[0].plot(fpr, tpr, linewidth=3, label=f"Train score = {round(train_score, 4)}", color="#262222")
             axes[0].plot([0, 1], [0, 1], linestyle="--", color="black", label="baseline", alpha=0.25)
             axes[0].set_xlabel("False Positive Rate", size=15)
             axes[0].set_ylabel("True Positive Rate", size=15)
@@ -182,11 +197,11 @@ try:
             valid_score = average_precision_score(valid_target, y_valid_pred)
             train_score = average_precision_score(train_target, y_train_pred)
             precision, recall, thresholds = precision_recall_curve(valid_target, y_valid_pred)
-            axes[1].plot(recall, precision, linewidth=3, label=f"Valid score = {round(valid_score, 4)}")
+            axes[1].plot(recall, precision, linewidth=3, label=f"Valid score = {round(valid_score, 4)}", color="#ff294d")
             fpr, tpr = [0, 1], [np.mean(valid_target), np.mean(valid_target)]
             axes[1].plot(fpr, tpr, linestyle="--", color="black", alpha=0.25)
             precision, recall, _ = precision_recall_curve(train_target, y_train_pred)
-            axes[1].plot(recall, precision, linewidth=3, label=f"Train score = {round(valid_score, 4)}")
+            axes[1].plot(recall, precision, linewidth=3, label=f"Train score = {round(valid_score, 4)}", color="#262222")
             fpr, tpr = [0, 1], [np.mean(train_target), np.mean(train_target)]
             axes[1].plot(fpr, tpr, linestyle="--", color="black", alpha=0.25, label="baseline")
             axes[1].set_title("Precision-Recall-Curve", size=15)
@@ -205,31 +220,40 @@ try:
                     submit = pd.DataFrame()
 
                 submit[target_name] = predictions
+                thresholds, scores, best_threshold = find_best_threshold(
+                    valid_target, y_valid_pred, thresholds)
 
-                # if st.checkbox('Использовать метки классов (0/1), а не вероятности:'):
-                thresholds, scores, best_threshold = find_best_threshold(valid_target, y_valid_pred, thresholds)
+                try:
+                    selected_threshold = best_threshold
+                except NameError:
+                    selected_threshold = threshold
 
                 fig, axes = plt.subplots(1, 1, figsize=(15, 7))
-                axes.plot(thresholds, scores, linewidth=3)
+                axes.plot(thresholds, scores, linewidth=3, color="#ff294d")
                 axes.set_xlabel("thresholds", size=15)
                 axes.set_ylabel("F1-score", size=15)
-                axes.set_xlim(0, 1)
+                axes.set_xlim(thresholds.min(), thresholds.max())
                 st.pyplot(fig)
-
-                msg = (
-                    "Значение вероятности, при котором объект относится к классу 1, "
-                    f"для данной задачи мы рекомендуем значение ({best_threshold})."
-                )
-                threshold = st.slider(
-                    label=msg, min_value=0.0, max_value=1.0, value=best_threshold, step=0.01
-                )
-                submit[target_name] = np.where(
-                    predictions >= threshold, 1, 0
-                )
-                st.table(submit.head())
-                tmp_download_link = download_link(submit, 'prediction.csv', 'Скачать прогнозы')
-                st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 except ValueError as err:
     st.text(f'{err.__class__} occured: {err}')
     st.text(traceback.format_exc())
+
+try:
+    msg = (
+        "Значение вероятности, при котором объект относится к классу 1, "
+        f"для данной задачи мы рекомендуем значение ({best_threshold}). "
+        f"Сейчас выбрано значение: {selected_threshold}"
+    )
+    st.text(msg)
+    submit[target_name] = np.where(
+        predictions >= selected_threshold, 1, 0
+    )
+    st.table(submit.head())
+    tmp_download_link = download_link(submit, 'prediction.csv', 'Скачать прогнозы')
+    st.markdown(tmp_download_link, unsafe_allow_html=True)
+
+except NameError as err:
+    pass
+    #st.text(f'{err.__class__} occured: {err}')
+    #st.text(traceback.format_exc())
