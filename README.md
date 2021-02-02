@@ -10,7 +10,9 @@ Most users will prefer using CraftML without modification. Advanced users will b
 
 Download the distribution, load your data into it, expect the result.
 
-Web version - https://share.streamlit.io/nv-27/craft_ml_app/app.py
+Screencast - https://github.com/OptimizationGuys/CraftML/raw/main/screenshots/CraftML%20-%20video
+
+Web version - https://share.streamlit.io/optimizationguys/craftml/main/app.py
 
 Test dataset - https://github.com/OptimizationGuys/CraftML/raw/main/Titanic.zip
 
@@ -64,7 +66,6 @@ Then you can easily run a demo application following this steps.
 
 
 ## Screenshots
-Screencast - https://github.com/OptimizationGuys/CraftML/raw/main/screenshots/CraftML%20-%20video
 
 <img src="screenshots/full_app.png" width="800">
 <img src="screenshots/target_distrib.png" height="150">
