@@ -10,7 +10,7 @@ Most users will prefer using CraftML without modification. Advanced users will b
 
 Download the distribution, load your data into it, expect the result.
 
-Screencast - https://github.com/OptimizationGuys/CraftML/raw/main/screenshots/CraftML%20-%20video
+Screencast - https://youtu.be/JmNdwzVpS5E
 
 Web version - https://share.streamlit.io/optimizationguys/craftml/main/app.py
 
