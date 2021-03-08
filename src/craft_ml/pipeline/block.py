@@ -27,23 +27,27 @@ class Block:
     Base class for all pipeline blocks.
     """
     def __init__(self):
-        self.cached_result = None
-        self.cache_id = None
+        self.cache_id: int = None
+        self.cached_result: t.Hashable = None
 
     def validate_cache(self, cache_id: int) -> bool:
         return self.cache_id is not None and cache_id == self.cache_id
 
-    def set_cached_result(self, cache_id: int, cached_result: t.Any) -> None:
+    def set_cached_result(self, cache_id: int, cached_result: t.Hashable) -> None:
         self.cache_id = cache_id
         self.cached_result = cached_result
 
-    def cached_run(self, cache_id: int, inputs: t.Any) -> t.Any:
+    def invalidate_cache(self) -> None:
+        self.cache_id = None
+        self.cached_result = None
+
+    def cached_run(self, cache_id: int, inputs: t.Hashable) -> t.Hashable:
         if not self.validate_cache(cache_id):
             cached_result = self.run(inputs)
             self.set_cached_result(cache_id, cached_result)
         return self.cached_result
 
-    def run(self, inputs: t.Any) -> t.Any:
+    def run(self, inputs: t.Hashable) -> t.Hashable:
         raise NotImplementedError
 
     def get_hyperparams(self) -> t.Dict[str, HyperParam]:
