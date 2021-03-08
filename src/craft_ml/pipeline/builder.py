@@ -5,12 +5,11 @@ from .block import BlockParams, Block
 
 
 class Pipeline:
-    def __init__(self, serialized_pipeline: str):
+    def __init__(self, objects: t.List[t.Dict[str, t.Any]]):
         self.block_params: t.List[BlockParams] = []
         self.blocks: t.List[Block] = []
         self.cached_outputs: t.Dict[str, t.Any] = {}
         self.names = set()
-        objects = json.loads(serialized_pipeline)
         for cur_object in objects:
             cur_params = BlockParams(name=cur_object['name'],
                                      inputs=cur_object['inputs'],
@@ -24,6 +23,10 @@ class Pipeline:
             self.block_params.append(cur_params)
             self.blocks.append(cur_block)
             self.cached_outputs[cur_params.name] = None
+
+    @staticmethod
+    def deserialize(serialized_pipeline: str):
+        return Pipeline(json.loads(serialized_pipeline))
 
     def find_block(self, name: str) -> t.Tuple[BlockParams, Block, t.Any]:
         found_idx = None
