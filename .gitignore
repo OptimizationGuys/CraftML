@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+AppImage/AppDir/
+AppImage/appimage-builder-cache
